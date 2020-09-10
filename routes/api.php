@@ -22,7 +22,7 @@ Route::group([
 	'middleware'=>'auth:api'
 ], function()
 {
-	Route::post('detail', 'API\UserController@detail');
+	Route::post('detail', 'API\UserController@details');
 }
 );
 

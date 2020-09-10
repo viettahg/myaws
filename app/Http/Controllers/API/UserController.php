@@ -14,19 +14,21 @@ class UserController extends Controller
 {
     public $sucessStatus = 200;
 
-    public function login()
-    {
-    	if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
-    		
-            $user = Auth::user(); 
-            $success['token'] =  $user->createToken('MyApp')->accessToken; 
 
-    		return response()->json(['success'=>$sucess, $this->sucessStatus]);
-    	}
-    	else
-    	{
-    		return response()>json(['error'=>'Unauthorised'], 401);
-    	}
+    public function login(Request $request)
+    { 
+        $loginData = $request->validate([
+            'email' => 'email|required',
+            'password' => 'required'
+        ]);
+
+        if (!auth()->attempt($loginData)) {
+            return response(['message' => 'Invalid Credentials']);
+        }
+
+        $accessToken = auth()->user()->createToken('MyApp')->accessToken;
+
+        return response(['user' => auth()->user(), 'access_token' => $accessToken]);
     }
 
     public function register(Request $request)
@@ -38,6 +40,8 @@ class UserController extends Controller
     		'c_password'=>'required|same:password',
     	]);
 
+        // dd($request->all());
+
     	if ($validator->fails()) {
     		return reponse()->json(['error'=>$validator->errors()], 401);
     	}
@@ -46,9 +50,10 @@ class UserController extends Controller
 
     	$input['password'] = bcrypt($input['password']);
 
-        dd($input);
+        
         $user = User::create($input); 
-        $success['token'] =  $user->createToken('MyApp')-> accessToken;
+
+        $success['token'] =  $user->createToken('MyApp')->accessToken;
     	$sucess['name'] = $user->name;
 
     	return response()->json(['success'=>$success], $this->sucessStatus);
