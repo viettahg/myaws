@@ -23,7 +23,7 @@ jobs:
             ./vit-deploy.sh
             echo **** Deployment Done ****
 
-workflow:
+workflows:
   build_push_deploy:
     jobs:
       - aws-ecr/build-and-push-image:
