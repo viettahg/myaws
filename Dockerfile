@@ -1,3 +1,4 @@
-FROM php:7.3-fpm
+FROM nginx:1.15
 
-COPY ./ /app
+COPY ./nginx_aws_demo/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx_aws_demo/app /app
